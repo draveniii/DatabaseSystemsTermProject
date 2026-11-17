@@ -60,10 +60,29 @@ create table Meetings (
     primary key (meetingDate, startTime, clubName)
 );
 
+SELECT
+CONSTRAINT_SCHEMA,
+TABLE_NAME,
+CONSTRAINT_NAME,
+CONSTRAINT_TYPE
+FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
+WHERE CONSTRAINT_SCHEMA = DATABASE()
+ORDER BY TABLE_NAME, CONSTRAINT_TYPE, CONSTRAINT_NAME;
+
 --Ensures no two events overlap
+--Assumes events/meetings are split into hour blocks
 delimiter //
 create trigger if not exists trigger_event_insert
 before insert on employee
 for each row
 begin
-    
+if exists (
+    select 1 from Events event
+    where new.eventDate = event.eventDate
+    and new.startTime = event.startTime
+) 
+then
+    signal SQLSTATE '45000' set MESSAGE_TEXT = "Timeslot already taken!";
+end if;
+end//
+delimiter ;
