@@ -15,7 +15,8 @@ create table Student (
 );
 
 create table Club (
-    name varchar(50) primary key
+    name varchar(50) primary key,
+    clubDescription text
 );
 
 create table Member (
@@ -56,6 +57,7 @@ create table Meetings (
     clubName varchar(50),
     endTime time,
     classroom varchar(50),
+    meetingDescription text,
     constraint fk_meeting_club foreign key (clubName) references Club(name),
     primary key (meetingDate, startTime, clubName)
 );
