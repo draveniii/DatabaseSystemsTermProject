@@ -73,13 +73,31 @@ ORDER BY TABLE_NAME, CONSTRAINT_TYPE, CONSTRAINT_NAME;
 --Assumes events/meetings are split into hour blocks
 delimiter //
 create trigger if not exists trigger_event_insert
-before insert on employee
+before insert on Events
 for each row
 begin
 if exists (
     select 1 from Events event
     where new.eventDate = event.eventDate
     and new.startTime = event.startTime
+) 
+then
+    signal SQLSTATE '45000' set MESSAGE_TEXT = "Timeslot already taken!";
+end if;
+end//
+delimiter ;
+
+--Ensures no two meetings overlap
+--Assumes events/meetings are split into hour blocks
+delimiter //
+create trigger if not exists trigger_meeting_insert
+before insert on Meetings
+for each row
+begin
+if exists (
+    select 1 from Meetings meeting
+    where new.eventDate = meeting.eventDate
+    and new.startTime = meeting.startTime
 ) 
 then
     signal SQLSTATE '45000' set MESSAGE_TEXT = "Timeslot already taken!";
