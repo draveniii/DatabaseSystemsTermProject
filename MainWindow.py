@@ -1,39 +1,29 @@
 # MainWindow.py
-from PyQt6.QtCore import QSize, Qt
-from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QGridLayout
+from PyQt6 import uic
+from PyQt6.QtWidgets import QMainWindow, QApplication
+import sys
 
+from UserTypePage import UserType
 
 # Subclass QMainWindow to customize your application's main window
 class MainWindow(QMainWindow):
-    def __init__(self, width, height):
+    def __init__(self):
         super().__init__()
 
         self.setWindowTitle("Club Management System")
-        self.setGeometry(100, 100, width, height)
 
-        # Create Elements
-        studentButton = QPushButton("Student")
-        facultyButton = QPushButton("Faculty")
-        adminButton = QPushButton("Admin")
+        # mainwindow.ui was created in QT Designer then loaded here
+        uic.loadUi('MainWindow.ui', self)
+        self.userType = UserType()
+        self.stackedWidget.addWidget(self.userType)
 
-        # Size Elements
-        studentButton.setFixedSize(QSize(200, 50))
-        facultyButton.setFixedSize(QSize(200, 50))   
-        adminButton.setFixedSize(QSize(200, 50)) 
 
-        # Stack elements on top of one another
-        v_layout = QVBoxLayout()
-        v_layout.addWidget(studentButton)
-        v_layout.addWidget(facultyButton)
-        v_layout.addWidget(adminButton)
+if __name__ == '__main__':
+    app = QApplication([])
+    window = MainWindow()
+    window.show()
+    app.exec()
+        
 
-        # Center elements in the middle of the window
-        main_content = QWidget()
-        main_content.setLayout(v_layout)
-        center_container = QWidget()
-        container_layout = QGridLayout(center_container)
-        container_layout.addWidget(main_content, 0, 0, Qt.AlignmentFlag.AlignCenter)
-
-        self.setCentralWidget(center_container)
 
 
